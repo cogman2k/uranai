@@ -1,12 +1,18 @@
-import { DataTypes } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import bcrypt from 'bcryptjs';
-import sequelize from '../config/database.js';
+import sequelize from '../config/sequelize.cjs';
 
-const User = sequelize.define('User', {
+class User extends Model {
+  async comparePassword(candidatePassword) {
+    return bcrypt.compare(candidatePassword, this.password);
+  }
+}
+
+User.init({
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
   },
   username: {
     type: DataTypes.STRING,
@@ -26,13 +32,12 @@ const User = sequelize.define('User', {
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      len: [6, 100]
-    }
+    allowNull: false
   }
 }, {
-  timestamps: true,
+  sequelize,
+  modelName: 'User',
+  tableName: 'users',
   hooks: {
     beforeCreate: async (user) => {
       if (user.password) {
@@ -48,9 +53,5 @@ const User = sequelize.define('User', {
     }
   }
 });
-
-User.prototype.comparePassword = async function(candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
-};
 
 export default User; 

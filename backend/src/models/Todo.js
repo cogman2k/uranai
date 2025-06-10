@@ -1,33 +1,39 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../config/database.js';
+import { Model, DataTypes } from 'sequelize';
+import sequelize from '../config/sequelize.cjs';
 import User from './User.js';
 
-const Todo = sequelize.define('Todo', {
+class Todo extends Model {}
+
+Todo.init({
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
   },
   title: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true
-    }
+    allowNull: false
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true
   },
   completed: {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
   userId: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: User,
+      model: 'users',
       key: 'id'
     }
   }
 }, {
+  sequelize,
+  modelName: 'Todo',
+  tableName: 'todos',
   timestamps: true
 });
 

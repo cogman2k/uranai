@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import { Op } from 'sequelize';
 import User from '../models/User.js';
-import sequelize from '../config/database.js';
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ router.post('/register', async (req, res) => {
     // Check if user already exists
     const existingUser = await User.findOne({
       where: {
-        [sequelize.Op.or]: [{ email }, { username }]
+        [Op.or]: [{ email }, { username }]
       }
     });
 
